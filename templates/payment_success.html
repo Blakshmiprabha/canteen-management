@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Successful{% endblock %}
+
+{% block content %}
+<div class="success-container">
+  <div class="tick-circle">
+    <svg class="tick-icon" viewBox="0 0 52 52">
+      <path d="M14 27l7 7 17-17" fill="none" stroke="#2ecc71" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <h2 class="success-message">Payment Successful!</h2>
+  <a href="{{ url_for('home') }}" class="btn-back">Back to Home</a>
+</div>
+
+<style>
+  .success-container {
+    text-align: center;
+    margin-top: 100px;
+    animation: fadeIn 1s ease-in;
+  }
+
+  .tick-circle {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    animation: popIn 0.5s ease-in-out;
+  }
+
+  .tick-icon {
+    width: 60px;
+    height: 60px;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: drawTick 1s ease forwards;
+  }
+
+  .success-message {
+    margin-top: 30px;
+    color: #2c3e50;
+    font-size: 2rem;
+    animation: fadeUp 0.8s ease-in;
+  }
+
+  .btn-back {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 25px;
+    background-color: #2ecc71;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.3s;
+  }
+
+  .btn-back:hover {
+    background-color: #27ae60;
+  }
+
+  @keyframes drawTick {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>
+{% endblock %}

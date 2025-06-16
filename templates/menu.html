@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Menu | Canteen{% endblock %}
+
+{% block content %}
+<section class="menu-section">
+  <div class="menu-header">
+    <h2>Today's Menu</h2>
+    <a href="{{ url_for('admin_login') }}" class="admin-login" title="Admin Login">
+      <i class="fas fa-user-shield"></i> Admin
+    </a>
+  </div>
+
+  {% if menu_items %}
+  <form id="order-form" method="POST" action="{{ url_for('place_order') }}">
+    <div class="menu-list">
+      {% for item in menu_items %}
+      <div class="menu-card {% if not item.available %}unavailable{% endif %}">
+        <h3>{{ item.name }}</h3>
+        <p class="price">₹{{ '%.2f'|format(item.price) }}</p>
+        <p class="status">{{ 'Available' if item.available else 'Sold Out' }}</p>
+        {% if item.available %}
+        <label for="qty-{{ item.id }}">Quantity:</label>
+       <input type="number" id="qty-{{ item._id|string }}" name="qty_{{ item._id|string }}" min="0" value="0" class="qty-input" />
+        {% else %}
+        <p><em>Not available</em></p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <button type="submit" id="order-now-btn" class="order-btn">Order Now</button>
+  </form>
+  {% else %}
+  <p class="no-items">No menu items available.</p>
+  {% endif %}
+</section>
+<script>
+const orderBtn = document.getElementById('order-now-btn');
+const qtyInputs = document.querySelectorAll('.qty-input');
+
+function toggleOrderButton() {
+  const anySelected = Array.from(qtyInputs).some(input => parseInt(input.value) > 0);
+  orderBtn.disabled = !anySelected;
+}
+
+qtyInputs.forEach(input => {
+  input.addEventListener('input', toggleOrderButton);
+});
+
+// Initialize button state on page load
+toggleOrderButton();
+</script>
+<style>
+  .menu-section {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    animation: fadeIn 0.8s ease-in;
+  }
+
+  .menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .menu-header h2 {
+    font-size: 2rem;
+  }
+
+  .admin-login {
+    text-decoration: none;
+    background: #111;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background 0.3s;
+  }
+
+  .admin-login:hover {
+    background: #444;
+  }
+
+  .menu-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .menu-card {
+    background: var(--nav-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeUp 0.5s ease-in-out;
+  }
+
+  .menu-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .menu-card.unavailable {
+    opacity: 0.6;
+  }
+
+  .price {
+    font-weight: bold;
+    margin-top: 0.5rem;
+    color: var(--btn-bg);
+  }
+
+  .status {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    color: #888;
+  }
+
+  label {
+    display: block;
+    margin-top: 0.75rem;
+    font-weight: 600;
+  }
+
+  .qty-input {
+    width: 60px;
+    padding: 0.3rem;
+    margin-top: 0.25rem;
+    font-size: 1rem;
+  }
+
+  .order-btn {
+    margin-top: 2rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--btn-bg);
+    color: #fff;
+    border-radius: 6px;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: block;
+    width: 200px;
+  }
+
+  .order-btn:hover {
+    background: var(--btn-hover);
+  }
+
+  @keyframes fadeUp {
+    0% {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .no-items {
+    text-align: center;
+    font-style: italic;
+  }
+.order-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+</style>
+<script>
+  document.getElementById('order-form').addEventListener('submit', function(e) {
+    let items = [];
+    const qtyInputs = document.querySelectorAll('.qty-input');
+
+    qtyInputs.forEach(input => {
+      const qty = parseInt(input.value);
+      if (qty > 0) {
+        const card = input.closest('.menu-card');
+        const name = card.querySelector('h3').textContent.trim();
+        const priceText = card.querySelector('.price').textContent.trim();
+        items.push({ name: name, qty: qty, price: priceText });
+      }
+    });
+
+    if (items.length === 0) {
+      e.preventDefault();
+      alert('Please select at least one item to order.');
+      return;
+    }
+
+    // Build order summary
+    let summary = 'You ordered:\n\n';
+    items.forEach(item => {
+      summary += `${item.name} x ${item.qty} (${item.price} each)\n`;
+    });
+
+    // Ask for confirmation
+    if (!confirm(summary + "\n\nProceed to place your order?")) {
+      e.preventDefault(); // Stop only if user cancels
+    }
+  });
+</script>
+
+{% endblock %}
+this is my menu.html

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Home - Canteen Management{% endblock %}
+
+{% block content %}
+<section id="about" style="margin-bottom: 3rem;">
+  <h2>About Our Canteen</h2>
+  <p>
+    Welcome to the Canteen Management System! We provide fresh and delicious meals prepared daily.
+    Order your favorite dishes online and enjoy quick delivery right to your doorstep.
+  </p>
+</section>
+
+<section id="previous-orders">
+  <h2>Your Previous Orders</h2>
+  {% if session.get('user_email') %}
+    {% if orders %}
+      <div class="orders-list">
+        {% for order in orders %}
+        <div class="order-card">
+          <p><strong>Order ID:</strong> {{ order['_id'] }}</p>
+          <p><strong>Date:</strong> {{ order['order_date'].strftime('%Y-%m-%d %H:%M') }}</p>
+          <p><strong>Status:</strong> {{ order['status'] }}</p>
+          <p><strong>Items:</strong></p>
+          <ul>
+            {% for item in order['items'] %}
+            <li>{{ item['name'] }} × {{ item['quantity'] }}</li>
+            {% endfor %}
+          </ul>
+          <p><strong>Total:</strong> ₹{{ order['total_amount'] }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>You have no previous orders.</p>
+    {% endif %}
+  {% else %}
+  <p>Please <a href="{{ url_for('login') }}" style="color: green; font-weight: bold;">login</a> to see your previous orders.</p>
+  {% endif %}
+</section>
+{% endblock %}

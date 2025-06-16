@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmation - Canteen{% endblock %}
+
+{% block content %}
+<section class="confirmation-section">
+  <h2>Order Confirmation</h2>
+  <p>Thank you for your order! Here’s what you ordered:</p>
+
+  <table class="order-table">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Qty</th>
+        <th>Price (each)</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in order %}
+      <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>₹{{ '%.2f'|format(item.price) }}</td>
+        <td>₹{{ '%.2f'|format(item.total_price) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="3" style="text-align: right;">Total Amount:</th>
+        <th>₹{{ '%.2f'|format(total_amount) }}</th>
+      </tr>
+    </tfoot>
+  </table>
+
+  <a href="{{ url_for('menu') }}" class="btn-back">Back to Menu</a>
+</section>
+
+<style>
+  .confirmation-section {
+    max-width: 600px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background-color: var(--nav-bg);
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+
+  .order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+  }
+
+  .order-table th, .order-table td {
+    border: 1px solid #ddd;
+    padding: 0.75rem 1rem;
+  }
+
+  .order-table th {
+    background-color: var(--btn-bg);
+    color: white;
+  }
+
+  .btn-back {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--btn-bg);
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s ease;
+  }
+
+  .btn-back:hover {
+    background: var(--btn-hover);
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Menu | Canteen{% endblock %}
+
+{% block content %}
+<section class="menu-section">
+  <div class="menu-header">
+    <h2>Today's Menu</h2>
+    <a href="{{ url_for('admin_login') }}" class="admin-login" title="Admin Login" aria-label="Admin Login">
+      <i class="fas fa-user-shield" aria-hidden="true"></i> Admin
+    </a>
+  </div>
+
+  <div class="menu-list">
+    {% for item in menu_items %}
+    <div class="menu-card {% if not item.available %}unavailable{% endif %}">
+      <h3>{{ item.name }}</h3>
+      <p class="price">₹{{ '%.2f' | format(item.price) }}</p>
+      <p class="status">{{ 'Available' if item.available else 'Sold Out' }}</p>
+      <a href="{{ url_for('order_view', item_id=str(item.id)) }}" 
+         class="order-btn {% if not item.available %}disabled{% endif %}"
+         {% if not item.available %} tabindex="-1" aria-disabled="true" {% endif %}>
+        Order Now
+      </a>
+    </div>
+    {% else %}
+    <p class="no-items">No menu items available.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<style>
+  .menu-section {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    animation: fadeIn 0.8s ease-in;
+  }
+
+  .menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .menu-header h2 {
+    font-size: 2rem;
+  }
+
+  .admin-login {
+    text-decoration: none;
+    background: #111;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+  }
+
+  .admin-login:hover {
+    background: #444;
+  }
+
+  .menu-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .menu-card {
+    background: var(--nav-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeUp 0.5s ease-in-out;
+  }
+
+  .menu-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .menu-card.unavailable {
+    opacity: 0.6;
+  }
+
+  .price {
+    font-weight: bold;
+    margin-top: 0.5rem;
+    color: var(--btn-bg);
+  }
+
+  .status {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    color: #888;
+  }
+
+  .order-btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--btn-bg);
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+  }
+
+  .order-btn:hover:not(.disabled) {
+    background: var(--btn-hover);
+  }
+
+  .order-btn.disabled {
+    background: #aaa;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  .no-items {
+    text-align: center;
+    font-style: italic;
+    color: #666;
+  }
+
+  @keyframes fadeUp {
+    0% {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+</style>
+{% endblock %}

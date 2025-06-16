@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Payment - Canteen Management{% endblock %}
+
+{% block content %}
+<section class="payment-section">
+  <h2>Scan & Pay with GPay</h2>
+
+  <p class="amount">Total Amount: <strong>₹{{ '%.2f'|format(total_amount) }}</strong></p>
+
+  <div class="qr-container">
+    <img src="{{ url_for('static', filename='image/gpay.jpg') }}" alt="GPay QR Code" class="qr-code">
+    <p class="instruction">Please scan this QR code using GPay and complete your payment.</p>
+  </div>
+
+  <div class="loader-container">
+    <div class="loader"></div>
+    <p class="countdown-text">Confirming your payment in <span id="countdown">10</span> seconds...</p>
+  </div>
+
+  <form id="autoForm" method="POST" action="{{ url_for('payment') }}"></form>
+</section>
+
+<script>
+  let countdown = 10;
+  const countdownEl = document.getElementById("countdown");
+
+  const timer = setInterval(() => {
+    countdown -= 1;
+    countdownEl.textContent = countdown;
+
+    if (countdown <= 0) {
+      clearInterval(timer);
+      document.getElementById("autoForm").submit();
+    }
+  }, 1000);
+</script>
+
+<style>
+  .payment-section {
+    max-width: 500px;
+    margin: 3rem auto;
+    background-color: var(--nav-bg, #f9f9f9);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
+    animation: fadeInUp 0.8s ease forwards;
+    text-align: center;
+  }
+
+  .amount {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    color: var(--btn-bg, #00796b);
+  }
+
+  .qr-code {
+    width: 250px;
+    height: 250px;
+    margin: 1rem auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 0.15);
+  }
+
+  .instruction {
+    margin-top: 1rem;
+    font-weight: 500;
+    color: var(--text-light, #555);
+  }
+
+  .loader-container {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  .loader {
+    margin: 0 auto 10px;
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #00796b;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+  }
+
+  .countdown-text {
+    font-weight: 600;
+    color: #333;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+{% endblock %}

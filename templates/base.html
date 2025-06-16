@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Canteen Management{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <script src="{{ url_for('static', filename='theme.js') }}"></script>
+
+    <style>
+      /* Basic fade-in animation */
+      body {
+        opacity: 0;
+        animation: fadeIn 1s ease forwards;
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        transition: background-color 0.5s ease, color 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* Theme variables scoped on html[data-theme] */
+      html[data-theme="light"] {
+        --bg-color: #ffffff;
+        --text-color: #333333;
+        --nav-bg: #f7f7f7;
+        --nav-text: #333333;
+        --btn-bg: #4caf50;
+        --btn-text: white;
+        --btn-hover-bg: #45a049;
+      }
+
+      html[data-theme="dark"] {
+        --bg-color: #121212;
+        --text-color: #eeeeee;
+        --nav-bg: #1f1f1f;
+        --nav-text: #eee;
+        --btn-bg: #1db954;
+        --btn-text: #fff;
+        --btn-hover-bg: #1aa34a;
+      }
+
+      header {
+        background-color: var(--nav-bg);
+        color: var(--nav-text);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      header nav a {
+        margin-left: 1rem;
+        text-decoration: none;
+        color: var(--nav-text);
+        font-weight: 600;
+        transition: color 0.3s ease;
+      }
+
+      header nav a:hover {
+        color: var(--btn-bg);
+      }
+
+      .btn {
+        background-color: var(--btn-bg);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        color: var(--btn-text);
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: var(--btn-hover-bg);
+      }
+
+      main {
+        padding: 2rem;
+        min-height: 70vh;
+      }
+
+      footer {
+        text-align: center;
+        padding: 1rem;
+        font-size: 0.9rem;
+        background-color: var(--nav-bg);
+        color: var(--nav-text);
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        header nav {
+          margin-top: 0.5rem;
+        }
+        header nav a {
+          margin-left: 0;
+          margin-right: 1rem;
+        }
+      }
+    </style>
+<header>
+    <div class="logo">
+        <a href="{{ url_for('home') }}" style="font-weight: 700; font-size: 1.5rem; color: var(--nav-text); text-decoration:none;">
+            SpEed CaNtEen
+        </a>
+    </div>
+  <nav>
+    <a href="{{ url_for('home') }}">Home</a>
+    {% if session.get('user') %}
+      <a href="{{ url_for('menu') }}">Menu</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+      {% if session.get('admin_logged_in') %}
+        <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+      {% endif %}
+    {% else %}
+      <a href="{{ url_for('login') }}">Login</a>
+      <a href="{{ url_for('register') }}">Register</a>
+      <a href="{{ url_for('admin_login') }}"><i class="fas fa-user-shield"></i></a>
+        {% endif %}
+
+        <button id="theme-toggle" class="btn" style="margin-left:1rem; cursor:pointer;" aria-label="Toggle dark and light theme">
+            ☀️
+        </button>
+    </nav>
+</header>
+
+
+</head>
+<body>
+        <main>
+        {% block content %}
+        <!-- Page specific content will go here -->
+        {% endblock %}
+    </main>
+    <footer>
+        &copy; 2025 Canteen Management System. All rights reserved.
+    </footer>
+
+    <!-- Optional: CSRF token accessible globally for JavaScript use -->
+    <script>
+      const csrfToken = "{{ csrf_token }}";
+    </script>
+
+    <script>
+      // Dark/Light Theme toggle
+      const themeToggleBtn = document.getElementById('theme-toggle');
+      const rootElem = document.documentElement;
+
+      // Load saved theme or default to light
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      rootElem.setAttribute('data-theme', savedTheme);
+      themeToggleBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+      themeToggleBtn.addEventListener('click', () => {
+        const currentTheme = rootElem.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        rootElem.setAttribute('data-theme', newTheme);
+        themeToggleBtn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('theme', newTheme);
+      });
+    </script>
+</body>
+</html>
